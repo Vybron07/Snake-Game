@@ -550,11 +550,14 @@ while running:
         if snake[0]in snake[1:]:
             game_over = True
 
-        if snake[0][0] < 0 or snake[0][0] >= GAME_COLS:
-            game_over = True
-
-        if snake[0][1] < 0 or snake[0][1] >= GAME_ROWS:
-            game_over = True
+        if (
+            snake[0][0] < 0 or
+            snake[0][0] >= GAME_COLS or
+            snake[0][1] < 0 or
+            snake[0][1] >= GAME_ROWS
+        ):
+            snake.pop(0)      # Remove the illegal head
+        game_over = True
 
         ate_food = False
 
