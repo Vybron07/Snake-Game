@@ -21,16 +21,19 @@ bonus_food_x = 0
 bonus_food_y = 0
 bonus_food_spawn_time = 0
 bonus_food_last_spawn = 0
+bonus_event_message = ""
+bonus_event_timer = 0
 
 WIDTH = 1280
 HEIGHT = 720
 
 HUD_HEIGHT = 90
+EVENT_BAR_HEIGHT = 60
 
 CELL_SIZE = 20
 
 GAME_WIDTH = WIDTH
-GAME_HEIGHT = HEIGHT - HUD_HEIGHT
+GAME_HEIGHT = HEIGHT - HUD_HEIGHT - EVENT_BAR_HEIGHT
 
 GAME_COLS = GAME_WIDTH // CELL_SIZE
 GAME_ROWS = GAME_HEIGHT // CELL_SIZE
@@ -89,7 +92,7 @@ def spawn_bonus_food():
     while True:
 
         fx = random.randint(0, (WIDTH // CELL_SIZE) - 1)
-        fy = random.randint(0, ((HEIGHT - HUD_HEIGHT) // CELL_SIZE) - 1)
+        fy = random.randint(0, ((HEIGHT - HUD_HEIGHT - EVENT_BAR_HEIGHT) // CELL_SIZE) - 1)
 
         if [fx, fy] not in snake and (fx != food_x or fy != food_y):
             bonus_food_x = fx
@@ -101,6 +104,7 @@ def reset_game():
     global snake,food_x,food_y
     global direction, next_direction,dx,dy
     global score, game_over
+    global paused
 
     snake = [
         [32,15],
@@ -120,6 +124,7 @@ def reset_game():
 
     score = 0
     game_over = False
+    paused = False
 
     global SNAKE_SPEED
     SNAKE_SPEED = STARTING_SPEED
@@ -221,6 +226,69 @@ def draw_hud():
     screen.blit(difficulty_text, (580,30))
     screen.blit(pause_text, (1000,30))
 
+def draw_event_bar():
+
+    pygame.draw.rect(
+        screen,
+        (35,35,35),
+        (0, HEIGHT - EVENT_BAR_HEIGHT, WIDTH, EVENT_BAR_HEIGHT)
+    )
+
+    pygame.draw.line(
+        screen,
+        (255,255,255),
+        (0, HEIGHT - EVENT_BAR_HEIGHT),
+        (WIDTH, HEIGHT - EVENT_BAR_HEIGHT),
+        2
+    )
+
+
+    global bonus_event_message
+
+
+    if pygame.time.get_ticks() < bonus_event_timer:
+
+        text = font.render(
+            bonus_event_message,
+            True,
+            (255,215,0)
+        )
+
+    elif bonus_food_active:
+
+        time_left = max(
+            0,
+            5 - (pygame.time.get_ticks() - bonus_food_spawn_time)//1000
+        )
+
+        text = font.render(
+            f" Mighty Berry Active, Disappearing in: {time_left}s",
+            True,
+            (0,150,255)
+        )
+
+    else:
+
+        time_left = max(
+            0,
+            20 - (pygame.time.get_ticks() - bonus_food_last_spawn)//1000
+        )
+
+        text = font.render(
+            f"⭐ Mighty Berry Appearing in : {time_left}s",
+            True,
+            (0,150,255)
+        )
+
+
+    screen.blit(
+        text,
+        (
+            20,
+            HEIGHT - EVENT_BAR_HEIGHT + 15
+        )
+    )
+
 def draw_game_over():
 
     if game_over:
@@ -289,8 +357,30 @@ def draw_game():
     draw_food()
     draw_bonus_food()
     draw_snake()
+    draw_event_bar()
     draw_game_over()
     draw_new_high_score()
+
+    #if not bonus_food_active:
+
+        #@time_left = max(
+            #0,
+            #20 - (pygame.time.get_ticks() - bonus_food_last_spawn) // 1000
+        #)
+
+        #timer_text = font.render(
+            #f"Next Bonus : {time_left}s",
+            #True,
+            #(0,150,255)
+        #)
+
+        #screen.blit(
+            #Timer_text,
+            #(
+                #WIDTH - timer_text.get_width() - 20,
+                #HEIGHT - timer_text.get_height() - 20
+            #)
+        #)
 
 
 def draw_menu():
@@ -557,7 +647,7 @@ while running:
             snake[0][1] >= GAME_ROWS
         ):
             snake.pop(0)      # Remove the illegal head
-        game_over = True
+            game_over = True
 
         ate_food = False
 
@@ -570,6 +660,7 @@ while running:
         if bonus_food_active:
 
             if snake[0][0] == bonus_food_x and snake[0][1] == bonus_food_y:
+                bonus_food_last_spawn = pygame.time.get_ticks()
 
                 bonus_food_active = False
 
