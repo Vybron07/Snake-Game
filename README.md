@@ -1,145 +1,173 @@
-# Snake Game 🐍
+🐍 Snake Game
 
-A classic Snake game developed using Python and Pygame.
+A classic Snake game built with Python and Pygame, with a modern UI, difficulty settings, high-score tracking, bonus food, animations, pause controls, and game-over handling.
 
-This project recreates the traditional Snake game with a clean interface, multiple difficulty levels, score tracking, and additional features to make the gameplay more enjoyable. It was built from scratch to understand basic game development concepts such as game loops, collision detection, user input handling, and game state management.
+🎮 Features
+Classic Snake gameplay
+Three difficulty levels:
+Easy
+Medium
+Hard
+Score tracking
+Persistent high-score system using highscore.txt
+Automatic speed increase as the score increases
+Red pulsing normal food
+Blue Mighty Berry bonus food
+Mighty Berry:
+Appears periodically
+Stays for 5 seconds
+Gives +5 score
+Adds 5 segments to the snake
+Snake head and eye animation
+Snake turns red when killed
+Immediate game-over screen
+Restart with R
+Pause/resume with ESC
+Settings menu
+Difficulty selection menu
+Main menu
+Bottom event/status bar
+Bonus-food countdown
+Collision detection with walls and the snake itself
+Separate gameplay area below the HUD
+No grid for a cleaner appearance
+🕹️ Controls
+Key	Action
+↑	Move Up
+↓	Move Down
+←	Move Left
+→	Move Right
+ESC	Pause / Resume
+R	Restart after Game Over
+🍓 Mighty Berry
 
-## Features
+The Mighty Berry is a special blue bonus food that appears during gameplay.
 
-- Classic Snake gameplay
-- Start menu system
-- Multiple difficulty levels
-- Smooth snake movement
-- Random food generation
-- Snake growth after eating food
-- Score tracking
-- High score saving
-- Wall collision detection
-- Self collision detection
-- Game over screen
-- Restart functionality
-- Different game speeds based on difficulty
+When collected:
 
-## Screenshots
-<img width="1602" height="936" alt="Screenshot 2026-07-27 000320" src="https://github.com/user-attachments/assets/009edc41-0c39-49be-bb61-70d72b0b0c13" />
-<img width="1602" height="952" alt="Screenshot 2026-07-27 000300" src="https://github.com/user-attachments/assets/7d3e6b9c-40a6-4e8b-a992-4a9d125ef3e0" />
-<img width="1592" height="932" alt="Screenshot 2026-07-27 000239" src="https://github.com/user-attachments/assets/b86a37d9-8843-4592-8b64-edeb80e1c1c9" />
+Score increases by 5
+Snake length increases by 5
+The bonus event ends immediately
 
+The bottom event bar shows information about the Mighty Berry, including when it will appear and how long it remains active.
 
-## Technologies Used
+📊 Scoring
+Normal Food
 
-- Python 3.11
-- Pygame
+Each normal food:
 
-## Installation
++1 Score
+Mighty Berry
 
-### Clone the repository
+Each Mighty Berry:
 
-```bash
-git clone https://github.com/your-username/snake-game.git
-```
++5 Score
++5 Snake Segments
 
-### Move into the project folder
+The game also increases the snake's speed as the score reaches certain thresholds.
 
-```bash
-cd snake-game
-```
+🏆 High Score
 
-### Install dependencies
+The highest score is stored in:
 
-```bash
-pip install pygame
-```
+highscore.txt
 
-### Run the game
+This allows the high score to remain available even after closing the game.
 
-```bash
-python main.py
-```
+A NEW HIGH SCORE message is displayed when the current score exceeds the previous high score.
 
-## Controls
-
-| Key | Action |
-|-----|--------|
-| ↑ Arrow | Move Up |
-| ↓ Arrow | Move Down |
-| ← Arrow | Move Left |
-| → Arrow | Move Right |
-| R | Restart Game |
-| ESC | Exit Game |
-
-## Gameplay
-
-The objective is simple: control the snake, collect food, and achieve the highest score possible.
-
-Each time the snake eats food:
-
-- The score increases
-- The snake becomes longer
-- Movement becomes more challenging
+💀 Game Over
 
 The game ends when the snake:
 
-- Hits the boundary
-- Collides with its own body
+Hits the wall
+Hits its own body
 
-Try to survive as long as possible and beat your highest score.
+When the snake dies:
 
-## Difficulty Levels
+The snake turns red.
+The snake stops moving.
+The Game Over message appears.
+The restart prompt is displayed.
+Press R to start a new game.
 
-The game contains three difficulty modes:
+After restarting, the snake returns to its normal green appearance and the game state is reset.
 
-### Easy
-- Slower snake movement
-- Suitable for beginners
+🎚️ Difficulty
 
-### Medium
-- Balanced speed and difficulty
+The game currently has three difficulty settings:
 
-### Hard
-- Faster snake movement
-- Requires quick reactions
+Easy   → Slower
+Medium → Normal
+Hard   → Faster
 
-## Project Structure
+The difficulty can be changed through the Settings menu.
 
-```text
-Snake-Game/
+🖥️ Interface
+
+The game is divided into three main areas:
+
+HUD
+
+The top section displays:
+
+Current Score
+High Score
+Difficulty
+Pause control
+Gameplay Area
+
+The main area contains:
+
+Snake
+Normal food
+Mighty Berry
+Snake movement and collisions
+Event Bar
+
+The bottom section displays Mighty Berry events and countdown information.
+
+📁 Project Structure
+Snake Game/
 │
-├── main.py              # Main game file
-├── highscore.txt        # Stores highest score
-├── assets/              # Game assets
-│
+├── main.py
+├── highscore.txt
 └── README.md
-```
+🛠️ Requirements
+Python 3.x
+Pygame
 
-## Development
+Install Pygame with:
 
-This project was developed using Pygame and focuses on implementing important game development concepts:
+pip install pygame
+▶️ Running the Game
 
-- Creating a game loop
-- Handling player input
-- Updating game objects
-- Managing game states
-- Implementing collision detection
-- Saving and loading game data
+Clone or download the project and open the project folder.
 
+Run:
 
-## Requirements
+python main.py
 
-Before running the game, make sure you have:
+The game will open with the main menu.
 
-- Python 3.11 or above
-- Pygame installed
-- A system capable of running Python applications
+🔧 Built With
+Python
+Pygame
+📌 Current Version
 
-## Future Compatibility
+The game currently focuses on polishing the core gameplay experience with:
 
-The project structure allows further expansion while maintaining the current gameplay system.
+Improved HUD
+Animated food
+Bonus food system
+High-score system
+Difficulty system
+Pause system
+Game-over animation
+Cleaner gameplay area
+Persistent scoring
+👨‍💻 Author
 
-## Author
+Vivek Raut
 
-**Vivek Raut**
-
-## License
-
-This project is open-source and available for personal and educational use.
+Built as a Python/Pygame project while learning game development and programming concepts.
