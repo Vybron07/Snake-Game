@@ -14,6 +14,8 @@ show_new_high_score = False
 high_score_timer = 0
 font = pygame.font.SysFont("consolas", 32)
 title_font = pygame.font.SysFont("consolas", 48, bold = True)
+death_animation = False
+death_start_time = 0
 
 # Bonus Food
 bonus_food_active = False
@@ -23,6 +25,7 @@ bonus_food_spawn_time = 0
 bonus_food_last_spawn = 0
 bonus_event_message = ""
 bonus_event_timer = 0
+
 
 WIDTH = 1280
 HEIGHT = 720
@@ -106,6 +109,15 @@ def reset_game():
     global score, game_over
     global paused
 
+    global bonus_food_active
+    global bonus_food_last_spawn
+    global bonus_food_spawn_time
+    global bonus_food_x
+    global bonus_food_y
+
+    global death_animation 
+    global death_start_time
+
     snake = [
         [32,15],
         [31,15],
@@ -125,6 +137,18 @@ def reset_game():
     score = 0
     game_over = False
     paused = False
+
+    death_animation = False
+    death_start_time = 0
+
+
+
+    bonus_food_active = False
+    bonus_food_spawn_time = 0
+    bonus_food_last_spawn = pygame.time.get_ticks()
+
+    bonus_food_x = -1
+    bonus_food_y = -1
 
     global SNAKE_SPEED
     SNAKE_SPEED = STARTING_SPEED
@@ -146,18 +170,73 @@ def draw_grid():
 
 def draw_snake():
 
-    for block in snake:
+    if not snake:
+        return 
+
+    for i, block in enumerate(snake):
+
+        if death_animation:
+            color = (255,0,0)
+        elif i == 0:
+            color = (0,180,0)
+        else:
+            color = (0,255,0)
 
         pygame.draw.rect(
             screen,
-            (0,255,0),
+            color,
             (
-                block[0] * CELL_SIZE,
-                HUD_HEIGHT + block[1] * CELL_SIZE,
-                CELL_SIZE,
-                CELL_SIZE
-            )
+                block[0] * CELL_SIZE + 1,
+                HUD_HEIGHT + block[1] * CELL_SIZE + 1,
+                CELL_SIZE - 2,
+                CELL_SIZE - 2
+            ),
+            border_radius = 6
         )
+
+        pygame.draw.circle(
+            screen,
+            (180,255,180),
+            (
+                block[0] * CELL_SIZE + 5,
+                HUD_HEIGHT + block[1] * CELL_SIZE + 5
+            ),
+            3
+        )
+
+    if not death_animation:
+
+        head_x = snake[0][0] * CELL_SIZE + 1
+        head_y = HUD_HEIGHT + snake[0][1] * CELL_SIZE + 1
+
+        if direction == "RIGHT":
+
+            pygame.draw.circle(screen, (255,255,255), (head_x + 14, head_y + 6),2)
+            pygame.draw.circle(screen,(255,255,255), (head_x + 14, head_y + 14), 2)
+        elif direction == "LEFT":
+
+            pygame.draw.circle(screen, (255,255,255),
+                (head_x+4, head_y+6), 2)
+
+            pygame.draw.circle(screen, (255,255,255),
+                (head_x+4, head_y+14), 2)
+
+        elif direction == "UP":
+
+            pygame.draw.circle(screen, (255,255,255),
+                ( head_x+6, head_y+4), 2)
+
+            pygame.draw.circle(screen, (255,255,255),
+                (head_x+14, head_y+4), 2)
+        elif direction == "DOWN":
+
+            pygame.draw.circle(screen, (255,255,255),
+                (head_x+6, head_y+14), 2)
+
+            pygame.draw.circle(screen, (255,255,255),
+                (head_x+14, head_y+14), 2)
+        
+
 
 def draw_food():
 
@@ -317,6 +396,9 @@ def draw_game_over():
             )
 
             screen.blit(text, rect)
+
+    if not game_over:
+        return 
 
 def draw_new_high_score():
 
@@ -531,7 +613,14 @@ def handle_events():
             elif event.key == pygame.K_DOWN and direction != "UP":
                 next_direction = "DOWN"
 
-current_time = pygame.time.get_ticks()
+pygame.time.get_ticks()
+
+#if death_animation:
+
+    #print(current_time - death_start_time)
+    #if current_time - death_start_time >= 700:
+        #death_animation = False
+        #game_over = True
 
 
 if bonus_food_active:
@@ -591,6 +680,13 @@ while running:
 
     current_time = pygame.time.get_ticks()
 
+    if death_animation:
+
+        if current_time - death_start_time >= 700:
+            death_animation = False
+            #game_over = True
+
+
     if not bonus_food_active:
 
         if current_time - bonus_food_last_spawn >= 20000:
@@ -607,7 +703,7 @@ while running:
     
     frame_count += 1
 
-    if frame_count >= SNAKE_SPEED and not game_over and not paused:
+    if (frame_count >= SNAKE_SPEED and not game_over and not paused and not death_animation):
 
         direction = next_direction
 
@@ -635,19 +731,32 @@ while running:
             head_y + dy
         ]
 
-        snake.insert(0, new_head)
+        #snake.insert(0, new_head)
 
-        if snake[0]in snake[1:]:
-            game_over = True
+        #if snake[0]in snake[1:]:
+            #death_animation = True
+            #death_start_time = pygame.time.get_ticks()
 
         if (
-            snake[0][0] < 0 or
-            snake[0][0] >= GAME_COLS or
-            snake[0][1] < 0 or
-            snake[0][1] >= GAME_ROWS
+            new_head[0] < 0 or
+            new_head[0] >= GAME_COLS or
+            new_head[1] < 0 or
+            new_head[1] >= GAME_ROWS
+            or new_head in snake
         ):
-            snake.pop(0)      # Remove the illegal head
+            death_animation = True
+            death_start_time = pygame.time.get_ticks()
             game_over = True
+
+        if death_animation:
+            frame_count = 0
+            continue
+
+        else:
+            snake.insert(0,new_head)
+        #if death_animation:
+            #frame_count = 0
+            #continue
 
         ate_food = False
 
