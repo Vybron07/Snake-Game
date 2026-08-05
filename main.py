@@ -23,6 +23,7 @@ bonus_food_x = 0
 bonus_food_y = 0
 bonus_food_spawn_time = 0
 bonus_food_last_spawn = 0
+bonus_food_froze_time = 0
 bonus_event_message = ""
 bonus_event_timer = 0
 
@@ -73,7 +74,8 @@ resume_button = pygame.Rect(WIDTH//2 - 150, 180, 300, 60)
 restart_button = pygame.Rect(WIDTH//2 - 150, 250, 300, 60)
 main_menu_button = pygame.Rect(WIDTH//2 - 150, 320, 300, 60)
 pause_quit_button = pygame.Rect(WIDTH//2 - 150, 390, 300, 60)
-
+game_over_restart_button = pygame.Rect(WIDTH //2 - 150, HEIGHT // 2+ 60, 300, 55)
+game_over_menu_button = pygame.Rect(WIDTH // 2 -150, HEIGHT // 2 + 130, 300, 55)
 
 
 def spawn_food():
@@ -114,6 +116,8 @@ def reset_game():
     global bonus_food_spawn_time
     global bonus_food_x
     global bonus_food_y
+    global bonus_food_pause_start
+    global bonus_food_froze_time
 
     global death_animation 
     global death_start_time
@@ -149,6 +153,8 @@ def reset_game():
 
     bonus_food_x = -1
     bonus_food_y = -1
+    bonus_food_pause_start = 0
+    bonus_food_froze_time = 0
 
     global SNAKE_SPEED
     SNAKE_SPEED = STARTING_SPEED
@@ -335,9 +341,12 @@ def draw_event_bar():
 
     elif bonus_food_active:
 
+        time_now = bonus_food_froze_time if bonus_food_froze_time > 0 else pygame.time.get_ticks()
+
+
         time_left = max(
             0,
-            5 - (pygame.time.get_ticks() - bonus_food_spawn_time)//1000
+            5 - (time_now - bonus_food_spawn_time)//1000
         )
 
         text = font.render(
@@ -347,6 +356,9 @@ def draw_event_bar():
         )
 
     else:
+
+        time_now = bonus_food_froze_time if bonus_food_froze_time > 0 else pygame.time.get_ticks()
+
 
         time_left = max(
             0,
@@ -370,35 +382,66 @@ def draw_event_bar():
 
 def draw_game_over():
 
-    if game_over:
-
-        over_surface = font.render(
-            "Game Over - Press R to Restart",
-            True,
-            (255,0,0)
-        )
-
-        rect = over_surface.get_rect(
-            center=(WIDTH//2, HEIGHT//2)
-        )
-
-        screen.blit(over_surface, rect)
-        if show_new_high_score:
-
-            text = title_font.render(
-                " NEW HIGH SCORE!",
-                True,
-                (255,215,0)
-            )
-
-            rect = text.get_rect(
-                center=(WIDTH//2, HEIGHT//2 - 60)
-            )
-
-            screen.blit(text, rect)
-
     if not game_over:
-        return 
+        return
+
+    # Dark transparent overlay
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 170))
+    screen.blit(overlay, (0, 0))
+
+    # Game Over title
+    title = title_font.render(
+        "GAME OVER",
+        True,
+        (255, 60, 60)
+    )
+
+    title_rect = title.get_rect(
+        center=(WIDTH // 2, HEIGHT // 2 - 120)
+    )
+
+    screen.blit(title, title_rect)
+
+    # Score
+    score_text = font.render(
+        f"Score: {score}",
+        True,
+        (255, 255, 255)
+    )
+
+    score_rect = score_text.get_rect(
+        center=(WIDTH // 2, HEIGHT // 2 - 50)
+    )
+
+    screen.blit(score_text, score_rect)
+
+    # High score
+    best_text = font.render(
+        f"Best: {high_score}",
+        True,
+        (255, 215, 0)
+    )
+
+    best_rect = best_text.get_rect(
+        center=(WIDTH // 2, HEIGHT // 2)
+    )
+
+    screen.blit(best_text, best_rect)
+
+    # Restart instruction
+    pygame.draw.rect(screen,(50,160,70), game_over_restart_button, border_radius = 8)
+    restart_text = font.render("RESTART",True, (255,255,255))
+    screen.blit(restart_text, restart_text.get_rect(center = game_over_restart_button.center))
+
+
+    # Main menu instruction
+    pygame.draw.rect(screen,(60,60,60), game_over_menu_button, border_radius = 8)
+    menu_text = font.render("MAIN MENU", True, (255,255,255))
+    screen.blit(menu_text, menu_text.get_rect(center = game_over_menu_button.center))
+
+    shortcut_text = pygame.font.SysFont("consolas", 20).render("R = Restart   |    ESC = Main Menu", True , (160,160,160))
+    screen.blit(shortcut_text,shortcut_text.get_rect(center = (WIDTH // 2, HEIGHT // 2+ 205)) )
 
 def draw_new_high_score():
 
@@ -513,6 +556,8 @@ def handle_events():
     global next_direction
     global selected_difficulty
     global paused
+    global game_over
+    global death_animation
 
     for event in pygame.event.get():
 
@@ -592,6 +637,33 @@ def handle_events():
 
                 elif difficulty_back_button.collidepoint(mouse_pos):
                     current_menu = MENU_SETTINGS
+
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and not  in_menu and not paused and not game_over:
+
+            mouse_x,mouse_y = event.pos
+
+            head_x = snake[0][0] * CELL_SIZE + CELL_SIZE // 2
+            head_y = HUD_HEIGHT + snake[0][1] * CELL_SIZE + CELL_SIZE//2
+
+            diff_x = mouse_x - head_x
+            diff_y = mouse_y - head_y
+
+            if abs(diff_x) > abs(diff_y):
+                if diff_x > 0 and direction != "LEFT":
+                    next_direction = "RIGHT"
+
+                elif diff_x < 0 and direction != "RIGHT":
+                    next_direction = "LEFT"
+
+            else:
+
+                if diff_y > 0 and direction != "UP":
+                    next_direction = "DOWN"
+
+                elif diff_y < 0 and direction != "DOWN":
+                    next_direction = "UP"
+
         
         if event.type == pygame.KEYDOWN:
 
@@ -612,6 +684,24 @@ def handle_events():
                         
             elif event.key == pygame.K_DOWN and direction != "UP":
                 next_direction = "DOWN"
+
+
+        if event.type == pygame.MOUSEBUTTONDOWN and game_over:
+
+            mouse_pos = event.pos
+
+            if game_over_restart_button.collidepoint(mouse_pos):
+                reset_game()
+                continue
+
+            elif game_over_menu_button.collidepoint(mouse_pos):
+                game_over = False
+                death_animation = False
+                paused = False
+                in_menu = True
+                current_menu = MAIN_MENU
+                continue
+
 
 pygame.time.get_ticks()
 
@@ -680,6 +770,9 @@ while running:
 
     current_time = pygame.time.get_ticks()
 
+    if (paused or game_over or death_animation) and bonus_food_froze_time == 0:
+        bonus_food_froze_time = current_time
+
     if death_animation:
 
         if current_time - death_start_time >= 700:
@@ -687,18 +780,62 @@ while running:
             #game_over = True
 
 
-    if not bonus_food_active:
+    
 
-        if current_time - bonus_food_last_spawn >= 20000:
-            bonus_food_active = True
-            bonus_food_spawn_time = current_time
-            bonus_food_last_spawn = current_time
-            spawn_bonus_food()
+    if not paused and not game_over and not death_animation:
 
-    if bonus_food_active:
+    # Adjust timers by any time spent paused/dead
+        if bonus_food_froze_time > 0:
 
-        if current_time - bonus_food_spawn_time >= 5000:
-            bonus_food_active = False
+            bonus_food_last_spawn += current_time - bonus_food_froze_time
+
+            if bonus_food_active:
+                bonus_food_spawn_time += current_time - bonus_food_froze_time
+
+            bonus_food_froze_time = 0
+
+    # Normal bonus food spawning
+        if not bonus_food_active:
+
+            if current_time - bonus_food_last_spawn >= 20000:
+
+                bonus_food_active = True
+                bonus_food_spawn_time = current_time
+                bonus_food_last_spawn = current_time
+
+                spawn_bonus_food()
+
+    # Bonus food disappears after 5 seconds
+        else:
+
+            if current_time - bonus_food_spawn_time >= 5000:
+
+                bonus_food_active = False
+
+    
+    #if not paused and not game_over and not death_animation:
+
+
+        #if not bonus_food_active:
+
+            #if current_time - bonus_food_last_spawn >= 20000:
+                #bonus_food_active = True
+                #bonus_food_spawn_time = current_time
+                #bonus_food_last_spawn = current_time
+                #spawn_bonus_food()
+
+            #else:
+
+                #if current_time - bonus_food_spawn_time >= 5000:
+                    #bonus_food_active = False
+
+        #elif current_time - bonus_food_spawn_time >= 5000:
+            #bonus_food_active = False
+
+        #if bonus_food_active:
+
+            #if current_time - bonus_food_spawn_time >= 5000:
+                #bonus_food_active = False
 
     
     frame_count += 1
