@@ -1,80 +1,92 @@
 🐍 Snake Game
 
-A classic Snake game built with Python and Pygame, with a modern UI, difficulty settings, high-score tracking, bonus food, animations, pause controls, and game-over handling.
+A classic Snake game built with Python and Pygame, enhanced with modern UI elements, difficulty levels, bonus food, high scores, death effects, and both keyboard and mouse controls.
 
 🎮 Features
-Classic Snake gameplay
-Three difficulty levels:
+🐍 Classic Snake gameplay
+🎯 Three difficulty levels:
 Easy
 Medium
 Hard
-Score tracking
-Persistent high-score system using highscore.txt
-Automatic speed increase as the score increases
-Red pulsing normal food
-Blue Mighty Berry bonus food
-Mighty Berry:
+🍎 Normal food with animated/pulsing effect
+🔵 Mighty Berry bonus food
 Appears periodically
-Stays for 5 seconds
 Gives +5 score
-Adds 5 segments to the snake
-Snake head and eye animation
-Snake turns red when killed
-Immediate game-over screen
-Restart with R
-Pause/resume with ESC
-Settings menu
-Difficulty selection menu
-Main menu
-Bottom event/status bar
-Bonus-food countdown
-Collision detection with walls and the snake itself
-Separate gameplay area below the HUD
-No grid for a cleaner appearance
+Makes the snake grow by 5 segments
+Automatically disappears after a limited time
+🏆 Persistent high-score system using highscore.txt
+⚡ Increasing snake speed as the score increases
+💀 Game-over state with a red snake
+🎬 Death animation/state
+🔄 Game-over restart button
+🏠 Main Menu button after Game Over
+⌨️ Keyboard shortcuts
+🖱️ Mouse-based direction control
+⏸️ Pause/Resume system
+⚙️ Settings and difficulty selection
+🎨 Custom HUD and event bar
+📊 Score and high-score display
+🖥️ 1280×720 game resolution
+🔴 Animated normal food
+🔵 Animated Mighty Berry
+🟢 Custom snake head, body and eyes
 🕹️ Controls
+Keyboard
 Key	Action
 ↑	Move Up
 ↓	Move Down
 ←	Move Left
 →	Move Right
-ESC	Pause / Resume
+ESC	Pause / Main Menu
 R	Restart after Game Over
+Mouse
+
+During gameplay, click in the direction you want the snake to move.
+
+The game determines whether the click is primarily:
+
+Left
+Right
+Up
+Down
+
+and changes the snake's direction accordingly.
+
 🍓 Mighty Berry
 
-The Mighty Berry is a special blue bonus food that appears during gameplay.
+The Mighty Berry is a special bonus food.
 
-When collected:
+Normal cycle
+Appears periodically during gameplay
+Remains available for a short period
+Gives 5 points
+Adds 5 segments to the snake
+Uses a blue animated appearance
 
-Score increases by 5
-Snake length increases by 5
-The bonus event ends immediately
+The bonus-food timer is designed to stop progressing when the game is paused or the snake has died.
 
-The bottom event bar shows information about the Mighty Berry, including when it will appear and how long it remains active.
+📈 Difficulty
 
-📊 Scoring
-Normal Food
+The game includes three difficulty settings:
 
-Each normal food:
+Easy    → Slower
+Medium  → Normal
+Hard    → Faster
 
-+1 Score
-Mighty Berry
+The difficulty can be changed from:
 
-Each Mighty Berry:
-
-+5 Score
-+5 Snake Segments
-
-The game also increases the snake's speed as the score reaches certain thresholds.
-
+Main Menu
+   ↓
+Settings
+   ↓
+Difficulty
 🏆 High Score
 
-The highest score is stored in:
+The game stores the highest score in:
 
 highscore.txt
 
-This allows the high score to remain available even after closing the game.
-
-A NEW HIGH SCORE message is displayed when the current score exceeds the previous high score.
+This allows the high score to remain even after closing and reopening the game.
 
 💀 Game Over
 
@@ -83,50 +95,19 @@ The game ends when the snake:
 Hits the wall
 Hits its own body
 
-When the snake dies:
+The snake changes to a red death state, and a Game Over screen appears.
 
-The snake turns red.
-The snake stops moving.
-The Game Over message appears.
-The restart prompt is displayed.
-Press R to start a new game.
+The Game Over screen provides:
 
-After restarting, the snake returns to its normal green appearance and the game state is reset.
+Current score
+Best score
+RESTART button
+MAIN MENU button
 
-🎚️ Difficulty
+Keyboard shortcuts are also available:
 
-The game currently has three difficulty settings:
-
-Easy   → Slower
-Medium → Normal
-Hard   → Faster
-
-The difficulty can be changed through the Settings menu.
-
-🖥️ Interface
-
-The game is divided into three main areas:
-
-HUD
-
-The top section displays:
-
-Current Score
-High Score
-Difficulty
-Pause control
-Gameplay Area
-
-The main area contains:
-
-Snake
-Normal food
-Mighty Berry
-Snake movement and collisions
-Event Bar
-
-The bottom section displays Mighty Berry events and countdown information.
-
+R   → Restart
+ESC → Main Menu
 📁 Project Structure
 Snake Game/
 │
@@ -139,35 +120,37 @@ Pygame
 
 Install Pygame with:
 
-pip install pygame
+py -3.11 -m pip install pygame
 ▶️ Running the Game
 
-Clone or download the project and open the project folder.
+Open a terminal inside the project directory and run:
 
-Run:
+py -3.11 main.py
+
+Or:
 
 python main.py
-
-The game will open with the main menu.
-
-🔧 Built With
+🔧 Technologies Used
 Python
 Pygame
-📌 Current Version
+Random
+Math
+File Handling
+🚀 Future Improvements
 
-The game currently focuses on polishing the core gameplay experience with:
+Possible future additions include:
 
-Improved HUD
-Animated food
-Bonus food system
-High-score system
-Difficulty system
-Pause system
-Game-over animation
-Cleaner gameplay area
-Persistent scoring
-👨‍💻 Author
+🎨 Multiple snake skins
+🌈 Custom color themes
+✨ Particle effects
+🔊 Sound effects
+🎵 Background music
+🥇 Score leaderboard
+🎮 Additional game modes
+📱 Android APK version
+🖼️ Custom sprites
+💫 Better death animation
+🎯 More power-ups
+👨‍💻 Project
 
-Vivek Raut
-
-Built as a Python/Pygame project while learning game development and programming concepts.
+This project was created as a custom Python/Pygame Snake game with the goal of going beyond the basic Snake implementation by adding UI, difficulty, bonus mechanics, persistent scoring, mouse controls, and polished game states.
