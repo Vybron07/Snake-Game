@@ -13,7 +13,10 @@ new_high_score = False
 show_new_high_score = False
 high_score_timer = 0
 font = pygame.font.SysFont("consolas", 32)
-title_font = pygame.font.SysFont("consolas", 48, bold = True)
+title_font = pygame.font.SysFont("consolas", 72, bold = True)
+subtitle_font = pygame.font.SysFont("consolas", 22)
+menu_font = pygame.font.SysFont("consolas", 30, bold = True)
+small_font = pygame.font.SysFont("consolas", 18)
 death_animation = False
 death_start_time = 0
 
@@ -33,6 +36,10 @@ HEIGHT = 720
 
 HUD_HEIGHT = 90
 EVENT_BAR_HEIGHT = 60
+
+play_button = pygame.Rect(WIDTH // 2 - 150, 300, 300, 60)
+settings_button = pygame.Rect(WIDTH // 2 - 150, 375, 300, 60)
+quit_button = pygame.Rect(WIDTH // 2 - 150, 450, 300, 60)
 
 CELL_SIZE = 20
 
@@ -61,9 +68,9 @@ MENU_DIFFICULTY = "difficulty"
 PAUSE_MENU = "pause"
 selected_difficulty = "Medium"
 
-easy_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 - 60,300,60)
+easy_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 - 70,300,60)
 medium_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2, 300,60)
-hard_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 60,300,60)
+hard_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 70,300,60)
 play_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 - 40, 300, 60)
 settings_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 30, 300, 60)
 quit_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 100, 300, 60)
@@ -366,7 +373,7 @@ def draw_event_bar():
         )
 
         text = font.render(
-            f"⭐ Mighty Berry Appearing in : {time_left}s",
+            f" Mighty Berry Appearing in : {time_left}s",
             True,
             (0,150,255)
         )
@@ -459,22 +466,68 @@ def draw_new_high_score():
 
         screen.blit(text, rect)
 
+def draw_main_menu_button(rect,text):
+
+    mouse_pos = pygame.mouse.get_pos()
+
+    if rect.collidepoint(mouse_pos):
+        color = (70,70,70)
+        border_color = (0,200,255)
+    else:
+        color = (40,40,40)
+        border_color = (90,90,90)
+
+    pygame.draw.rect(screen,color,rect,border_radius = 12)
+    pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
+    text_surface = menu_font.render(text,True,(255,255,255))
+    screen.blit(text_surface,text_surface.get_rect(center = rect.center))
+
+
+
+
 def draw_main_menu():
+
+    screen.fill((10,10,15))
+
+    for x in range(0,WIDTH,40):
+        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
+
+    for y in range(0,HEIGHT,40):
+        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
+        
 
     title = font.render("SNAKE GAME", True, (255,255,255))
     screen.blit(title, title.get_rect(center=(WIDTH//2, 150)))
 
-    pygame.draw.rect(screen, (60,60,60), play_button)
-    pygame.draw.rect(screen, (60,60,60), settings_button)
-    pygame.draw.rect(screen, (60,60,60), quit_button)
+    pygame.draw.line(screen,(0,180,100),(WIDTH // 2 - 150,205),(WIDTH // 2 + 150,205),3)
+    subtitle = subtitle_font.render("CLASSIC MODE",True,(160,160,160))
+    screen.blit(subtitle,subtitle.get_rect(center = (WIDTH // 2,255)))
 
-    play_text = font.render("Play", True, (255,255,255))
-    settings_text = font.render("Settings", True, (255,255,255))
-    quit_text = font.render("Quit", True, (255,255,255))
+    draw_main_menu_button(play_button, "PLAY")
+    draw_main_menu_button(settings_button, "SETTINGS")
+    draw_main_menu_button(quit_button, "QUIT")
 
-    screen.blit(play_text, play_text.get_rect(center=play_button.center))
-    screen.blit(settings_text, settings_text.get_rect(center=settings_button.center))
-    screen.blit(quit_text, quit_text.get_rect(center=quit_button.center))
+
+    
+
+
+    # pygame.draw.rect(screen, (60,60,60), play_button)
+    # pygame.draw.rect(screen, (60,60,60), settings_button)
+    # pygame.draw.rect(screen, (60,60,60), quit_button)
+
+    # play_text = font.render("Play", True, (255,255,255))
+    # settings_text = font.render("Settings", True, (255,255,255))
+    # quit_text = font.render("Quit", True, (255,255,255))
+
+    # screen.blit(play_text, play_text.get_rect(center=play_button.center))
+    # screen.blit(settings_text, settings_text.get_rect(center=settings_button.center))
+    # screen.blit(quit_text, quit_text.get_rect(center=quit_button.center))
+
+    version = small_font.render("v1.0",True,(70,70,70))
+    screen.blit(version,(20,HEIGHT - 30))
+
+
+
 
 def draw_game():
     draw_hud()
@@ -508,45 +561,111 @@ def draw_game():
         #)
 
 
+
+def draw_menu_button(rect,text):
+
+    mouse_pos = pygame.mouse.get_pos()
+
+    if rect.collidepoint(mouse_pos):
+        color = (70,70,70)
+        border_color = (0,200,255)
+    else:
+        color = (40,40,40)
+        border_color = (90,90,90)
+
+    pygame.draw.rect(screen,color,rect,border_radius = 12)
+    pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
+    text_surface = menu_font.render(text,True,(255,255,255))
+    screen.blit(text_surface,text_surface.get_rect(center = rect.center))
+
 def draw_menu():
+
+
+    screen.fill((10,10,15))
+    
+    for x in range(0,WIDTH,40):
+        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
+    
+    for y in range(0,HEIGHT,40):
+        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
+
+    
 
     title_surface = font.render("SNAKE GAME", True, (255,255,255))
     title_rect = title_surface.get_rect(center=(WIDTH//2, HEIGHT//2 - 120))
     screen.blit(title_surface, title_rect)
 
-    pygame.draw.rect(screen, (60,60,60), easy_button)
-    pygame.draw.rect(screen, (60,60,60), medium_button)
-    pygame.draw.rect(screen, (60,60,60), hard_button)
-    pygame.draw.rect(screen, (60,60,60), difficulty_back_button)
+    draw_menu_button(easy_button, "Easy")
+    draw_menu_button(medium_button, "Medium")
+    draw_menu_button(hard_button, "Hard")
+    draw_menu_button(difficulty_back_button, "Back")
 
-    easy_text = font.render("Easy", True, (255,255,255))
-    screen.blit(easy_text, easy_text.get_rect(center=easy_button.center))
 
-    medium_text = font.render("Medium", True, (255,255,255))
-    screen.blit(medium_text, medium_text.get_rect(center=medium_button.center))
 
-    hard_text = font.render("Hard", True, (255,255,255))
-    screen.blit(hard_text, hard_text.get_rect(center=hard_button.center))
 
-    back_text = font.render("Back", True, (255,255,255))
-    screen.blit(back_text, back_text.get_rect(center = difficulty_back_button.center))
+    # pygame.draw.rect(screen, (60,60,60), easy_button)
+    # pygame.draw.rect(screen, (60,60,60), medium_button)
+    # pygame.draw.rect(screen, (60,60,60), hard_button)
+    # pygame.draw.rect(screen, (60,60,60), difficulty_back_button)
+
+    # easy_text = font.render("Easy", True, (255,255,255))
+    # screen.blit(easy_text, easy_text.get_rect(center=easy_button.center))
+
+    # medium_text = font.render("Medium", True, (255,255,255))
+    # screen.blit(medium_text, medium_text.get_rect(center=medium_button.center))
+
+    # hard_text = font.render("Hard", True, (255,255,255))
+    # screen.blit(hard_text, hard_text.get_rect(center=hard_button.center))
+
+    # back_text = font.render("Back", True, (255,255,255))
+    # screen.blit(back_text, back_text.get_rect(center = difficulty_back_button.center))
+
+
+
+
+def draw_settings_menu_button(rect,text):
+
+    mouse_pos = pygame.mouse.get_pos()
+
+    if rect.collidepoint(mouse_pos):
+        color = (70,70,70)
+        border_color = (0,200,255)
+    else:
+        color = (40,40,40)
+        border_color = (90,90,90)
+
+    pygame.draw.rect(screen,color,rect,border_radius = 12)
+    pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
+    text_surface = menu_font.render(text,True,(255,255,255))
+    screen.blit(text_surface,text_surface.get_rect(center = rect.center))
 
 def draw_settings_menu():
+
+
+    screen.fill((10,10,15))
+    
+    for x in range(0,WIDTH,40):
+        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
+    
+    for y in range(0,HEIGHT,40):
+        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
 
     title = font.render("SETTINGS", True, (255,255,255))
     screen.blit(title, title.get_rect(center=(WIDTH//2,120)))
 
+    draw_settings_menu_button(difficulty_button, f"Difficulty: {selected_difficulty}")
+    draw_settings_menu_button(back_button, "Back")
     
 
-    pygame.draw.rect(screen,(60,60,60),difficulty_button)
-    pygame.draw.rect(screen,(60,60,60),back_button)
+    # pygame.draw.rect(screen,(60,60,60),difficulty_button)
+    # pygame.draw.rect(screen,(60,60,60),back_button)
 
-    difficulty_text = (font.render(f"Difficulty:{selected_difficulty}",True,(255,255,255)))
-    screen.blit(difficulty_text, difficulty_text.get_rect(center = difficulty_button.center))
+    # difficulty_text = (font.render(f"Difficulty:{selected_difficulty}",True,(255,255,255)))
+    # screen.blit(difficulty_text, difficulty_text.get_rect(center = difficulty_button.center))
     
 
-    screen.blit(font.render("Back",True,(255,255,255)),
-                font.render("Back",True,(255,255,255)).get_rect(center=back_button.center))
+    # screen.blit(font.render("Back",True,(255,255,255)),
+    #             font.render("Back",True,(255,255,255)).get_rect(center=back_button.center))
 
 def handle_events():
     global running
