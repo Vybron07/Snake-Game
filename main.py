@@ -17,6 +17,24 @@ title_font = pygame.font.SysFont("consolas", 72, bold = True)
 subtitle_font = pygame.font.SysFont("consolas", 22)
 menu_font = pygame.font.SysFont("consolas", 30, bold = True)
 small_font = pygame.font.SysFont("consolas", 18)
+
+BG_COLOR = (10,10,15)
+PANEL_COLOR = (25,27,32)
+PANEL_LIGHT = (35,38,45)
+
+TEXT_COLOR = (235,235,240)
+TEXT_MUTED = (150,155,165)
+
+PRIMARY = (0,200,140)
+PRIMARY_HOVER = (0,230,165)
+
+ACCENT = (0,200,255)
+DANGER = (255,70,70)
+WARNING = (255,210,70)
+BONUS = (0,160,255)
+
+BORDER_COLOR = (70,75,85)
+
 death_animation = False
 death_start_time = 0
 
@@ -74,15 +92,18 @@ hard_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 70,300,60)
 play_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 - 40, 300, 60)
 settings_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 30, 300, 60)
 quit_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 100, 300, 60)
-difficulty_button = pygame.Rect(WIDTH//2 - 150, 220, 345, 60)
+difficulty_button = pygame.Rect(WIDTH//2 - 170, 220, 345, 60)
 back_button = pygame.Rect(WIDTH//2 - 150, 300, 300, 60)
-difficulty_back_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 140, 300, 60)
+difficulty_back_button = pygame.Rect(WIDTH//2 - 150, HEIGHT//2 + 160, 300, 60)
 resume_button = pygame.Rect(WIDTH//2 - 150, 180, 300, 60)
 restart_button = pygame.Rect(WIDTH//2 - 150, 250, 300, 60)
 main_menu_button = pygame.Rect(WIDTH//2 - 150, 320, 300, 60)
 pause_quit_button = pygame.Rect(WIDTH//2 - 150, 390, 300, 60)
 game_over_restart_button = pygame.Rect(WIDTH //2 - 150, HEIGHT // 2+ 60, 300, 55)
 game_over_menu_button = pygame.Rect(WIDTH // 2 -150, HEIGHT // 2 + 130, 300, 55)
+
+
+
 
 
 def spawn_food():
@@ -172,6 +193,16 @@ def reset_game():
     global show_new_high_score
 
     show_new_high_score = False
+
+
+def draw_style():
+    screen.fill(BG_COLOR)
+        
+    for x in range(0,WIDTH,40):
+        pygame.draw.line(screen,(17,18,24),(x,0),(x,HEIGHT))
+        
+    for y in range(0,HEIGHT,40):
+         pygame.draw.line(screen,(17,18,24),(0,y),(WIDTH,y))
 
 def draw_grid():
 
@@ -466,34 +497,40 @@ def draw_new_high_score():
 
         screen.blit(text, rect)
 
-def draw_main_menu_button(rect,text):
-
+def draw_button(rect,text,accent = ACCENT):
     mouse_pos = pygame.mouse.get_pos()
+    hovered = rect.collidepoint(mouse_pos)
 
-    if rect.collidepoint(mouse_pos):
-        color = (70,70,70)
-        border_color = (0,200,255)
+    if hovered:
+        fill_color = PANEL_LIGHT
+        border_color = ACCENT
+        #text_color = TEXT_COLOR
+        border_width = 2
+
     else:
-        color = (40,40,40)
-        border_color = (90,90,90)
+        fill_color = PANEL_COLOR
+        border_color = BORDER_COLOR
+        #text_color = TEXT_COLOR
+        border_width = 1
 
-    pygame.draw.rect(screen,color,rect,border_radius = 12)
-    pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
-    text_surface = menu_font.render(text,True,(255,255,255))
+
+    pygame.draw.rect(screen,fill_color,rect,border_radius = 12)
+    pygame.draw.rect(screen,border_color,rect,border_width,border_radius = 12)
+
+    text_surface = menu_font.render(text,True,text_color)
+    text_rect = text_surface.get_rect(center = rect.center)
+
     screen.blit(text_surface,text_surface.get_rect(center = rect.center))
+
+
+    
 
 
 
 
 def draw_main_menu():
 
-    screen.fill((10,10,15))
-
-    for x in range(0,WIDTH,40):
-        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
-
-    for y in range(0,HEIGHT,40):
-        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
+    draw_style()
         
 
     title = font.render("SNAKE GAME", True, (255,255,255))
@@ -503,25 +540,10 @@ def draw_main_menu():
     subtitle = subtitle_font.render("CLASSIC MODE",True,(160,160,160))
     screen.blit(subtitle,subtitle.get_rect(center = (WIDTH // 2,255)))
 
-    draw_main_menu_button(play_button, "PLAY")
-    draw_main_menu_button(settings_button, "SETTINGS")
-    draw_main_menu_button(quit_button, "QUIT")
+    draw_button(play_button, "PLAY",PRIMARY)
+    draw_button(settings_button, "SETTINGS",ACCENT)
+    draw_button(quit_button, "QUIT",DANGER)
 
-
-    
-
-
-    # pygame.draw.rect(screen, (60,60,60), play_button)
-    # pygame.draw.rect(screen, (60,60,60), settings_button)
-    # pygame.draw.rect(screen, (60,60,60), quit_button)
-
-    # play_text = font.render("Play", True, (255,255,255))
-    # settings_text = font.render("Settings", True, (255,255,255))
-    # quit_text = font.render("Quit", True, (255,255,255))
-
-    # screen.blit(play_text, play_text.get_rect(center=play_button.center))
-    # screen.blit(settings_text, settings_text.get_rect(center=settings_button.center))
-    # screen.blit(quit_text, quit_text.get_rect(center=quit_button.center))
 
     version = small_font.render("v1.0",True,(70,70,70))
     screen.blit(version,(20,HEIGHT - 30))
@@ -539,57 +561,36 @@ def draw_game():
     draw_game_over()
     draw_new_high_score()
 
-    #if not bonus_food_active:
 
-        #@time_left = max(
-            #0,
-            #20 - (pygame.time.get_ticks() - bonus_food_last_spawn) // 1000
-        #)
-
-        #timer_text = font.render(
-            #f"Next Bonus : {time_left}s",
-            #True,
-            #(0,150,255)
-        #)
-
-        #screen.blit(
-            #Timer_text,
-            #(
-                #WIDTH - timer_text.get_width() - 20,
-                #HEIGHT - timer_text.get_height() - 20
-            #)
-        #)
-
-
-
-def draw_menu_button(rect,text):
-
+def draw_hover(rect,text):
     mouse_pos = pygame.mouse.get_pos()
-
+    
     if rect.collidepoint(mouse_pos):
         color = (70,70,70)
         border_color = (0,200,255)
     else:
         color = (40,40,40)
         border_color = (90,90,90)
-
+    
     pygame.draw.rect(screen,color,rect,border_radius = 12)
     pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
     text_surface = menu_font.render(text,True,(255,255,255))
     screen.blit(text_surface,text_surface.get_rect(center = rect.center))
 
+
+
+
+
+# def draw_menu_button(rect,text,accent = ACCENT):
+#     mouse_pos = pygame.mouse.get_pos()
+#     hovered = 
+
+   
+
 def draw_menu():
 
 
-    screen.fill((10,10,15))
-    
-    for x in range(0,WIDTH,40):
-        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
-    
-    for y in range(0,HEIGHT,40):
-        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
-
-    
+    draw_style()
 
     title_surface = font.render("SNAKE GAME", True, (255,255,255))
     title_rect = title_surface.get_rect(center=(WIDTH//2, HEIGHT//2 - 120))
@@ -603,52 +604,18 @@ def draw_menu():
 
 
 
-    # pygame.draw.rect(screen, (60,60,60), easy_button)
-    # pygame.draw.rect(screen, (60,60,60), medium_button)
-    # pygame.draw.rect(screen, (60,60,60), hard_button)
-    # pygame.draw.rect(screen, (60,60,60), difficulty_back_button)
-
-    # easy_text = font.render("Easy", True, (255,255,255))
-    # screen.blit(easy_text, easy_text.get_rect(center=easy_button.center))
-
-    # medium_text = font.render("Medium", True, (255,255,255))
-    # screen.blit(medium_text, medium_text.get_rect(center=medium_button.center))
-
-    # hard_text = font.render("Hard", True, (255,255,255))
-    # screen.blit(hard_text, hard_text.get_rect(center=hard_button.center))
-
-    # back_text = font.render("Back", True, (255,255,255))
-    # screen.blit(back_text, back_text.get_rect(center = difficulty_back_button.center))
-
+  
 
 
 
 def draw_settings_menu_button(rect,text):
 
-    mouse_pos = pygame.mouse.get_pos()
-
-    if rect.collidepoint(mouse_pos):
-        color = (70,70,70)
-        border_color = (0,200,255)
-    else:
-        color = (40,40,40)
-        border_color = (90,90,90)
-
-    pygame.draw.rect(screen,color,rect,border_radius = 12)
-    pygame.draw.rect(screen,border_color,rect,2,border_radius = 12)
-    text_surface = menu_font.render(text,True,(255,255,255))
-    screen.blit(text_surface,text_surface.get_rect(center = rect.center))
+    draw_hover(rect,text)
 
 def draw_settings_menu():
 
 
-    screen.fill((10,10,15))
-    
-    for x in range(0,WIDTH,40):
-        pygame.draw.line(screen,(18,18,25),(x,0),(x,HEIGHT))
-    
-    for y in range(0,HEIGHT,40):
-        pygame.draw.line(screen,(18,18,25),(0,y),(WIDTH,y))
+    draw_style()
 
     title = font.render("SETTINGS", True, (255,255,255))
     screen.blit(title, title.get_rect(center=(WIDTH//2,120)))
@@ -657,15 +624,6 @@ def draw_settings_menu():
     draw_settings_menu_button(back_button, "Back")
     
 
-    # pygame.draw.rect(screen,(60,60,60),difficulty_button)
-    # pygame.draw.rect(screen,(60,60,60),back_button)
-
-    # difficulty_text = (font.render(f"Difficulty:{selected_difficulty}",True,(255,255,255)))
-    # screen.blit(difficulty_text, difficulty_text.get_rect(center = difficulty_button.center))
-    
-
-    # screen.blit(font.render("Back",True,(255,255,255)),
-    #             font.render("Back",True,(255,255,255)).get_rect(center=back_button.center))
 
 def handle_events():
     global running
@@ -824,12 +782,6 @@ def handle_events():
 
 pygame.time.get_ticks()
 
-#if death_animation:
-
-    #print(current_time - death_start_time)
-    #if current_time - death_start_time >= 700:
-        #death_animation = False
-        #game_over = True
 
 
 if bonus_food_active:
@@ -932,29 +884,7 @@ while running:
                 bonus_food_active = False
 
     
-    #if not paused and not game_over and not death_animation:
-
-
-        #if not bonus_food_active:
-
-            #if current_time - bonus_food_last_spawn >= 20000:
-                #bonus_food_active = True
-                #bonus_food_spawn_time = current_time
-                #bonus_food_last_spawn = current_time
-                #spawn_bonus_food()
-
-            #else:
-
-                #if current_time - bonus_food_spawn_time >= 5000:
-                    #bonus_food_active = False
-
-        #elif current_time - bonus_food_spawn_time >= 5000:
-            #bonus_food_active = False
-
-        #if bonus_food_active:
-
-            #if current_time - bonus_food_spawn_time >= 5000:
-                #bonus_food_active = False
+    
 
     
     frame_count += 1
@@ -987,11 +917,7 @@ while running:
             head_y + dy
         ]
 
-        #snake.insert(0, new_head)
-
-        #if snake[0]in snake[1:]:
-            #death_animation = True
-            #death_start_time = pygame.time.get_ticks()
+       
 
         if (
             new_head[0] < 0 or
